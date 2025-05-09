@@ -1,6 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
-#include <string.h>
+#include <termios.h>
 
 #define LENGTH 30000
 
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
 
             case ',':
             {
-                turing[current_cell] = (unsigned int) getchar();
+                turing[current_cell] = (int) getchar();
                 break;
             }
 
