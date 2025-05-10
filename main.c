@@ -41,7 +41,6 @@ int main(int argc, char* argv[]) {
     size_t pc = 0;
     int current_cell = 0;
     int loop_start;
-    int was_print = 0;
 
     raw_mode();
 
@@ -72,7 +71,6 @@ int main(int argc, char* argv[]) {
                 break;
 
             case '.':
-                was_print = 1;
                 printf("%c", (char) turing[current_cell]);
                 break;
 
@@ -85,23 +83,23 @@ int main(int argc, char* argv[]) {
                     }
                 }
                 turing[current_cell] = (int) ch;
+                break;
             }
 
             case '[':
-                
+                loop_start = i;
                 break;
             
             case ']':
+                if (turing[current_cell] != 0) {
+                    i = loop_start - 1;
+                }
                 break;
         }
     }
 
     fclose(fp);
     reset_terminal();
-
-    if (was_print) {
-        printf("\n");
-    }
 
     return 0;
 }
