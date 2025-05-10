@@ -27,7 +27,6 @@ int main(int argc, char* argv[]) {
 
     if (!fp) {
         perror("No file path provided");
-        fclose(fp);
         return 1;
     }
     
@@ -48,11 +47,19 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < size; i++) {
         switch (code[i]) {
             case '>':
-                current_cell++;
+                if (current_cell >= 29999) {
+                    current_cell = 0;
+                } else {
+                    current_cell++;
+                }
                 break;
             
             case '<':
-                current_cell--;
+                if (current_cell <= 0) {
+                    current_cell = 29999;
+                } else {
+                    current_cell--;
+                }
                 break;
 
             case '+':
