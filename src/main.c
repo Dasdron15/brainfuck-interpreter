@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <termios.h>
+#include "modes.h"
 
 #define LENGTH 30000
 
@@ -17,6 +18,8 @@ int main(int argc, char* argv[]) {
     int operand;
     int current_cell = 0;
     int loop_start;
+
+    raw_mode();
 
     while ((operand = fgetc(fp)) != EOF) {
         switch ((char) operand) {
@@ -50,8 +53,13 @@ int main(int argc, char* argv[]) {
 
             case ',':
             {
-                turing[current_cell] = (int) getchar();
-                break;
+                char ch;
+                while (read(STDIN_FILENO, &ch, 1) == 1) {
+                    if ((int) ch >= 0 && (int) ch <= 127) {
+                        break;
+                    }
+                }
+                turing[current_cell] = (int) ch;
             }
 
             case '[':
@@ -61,8 +69,6 @@ int main(int argc, char* argv[]) {
                 break;
         }
     }
-
-    printf("\n");
 
     return 0;
 }

@@ -1,2 +1,2 @@
 all:
-	gcc -o brainf main.c
+	gcc -o brainf src/main.c src/modes.c
