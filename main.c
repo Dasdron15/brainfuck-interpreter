@@ -99,6 +99,7 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    free(code);
     fclose(fp);
     reset_terminal();
 
