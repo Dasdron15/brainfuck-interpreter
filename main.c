@@ -27,6 +27,7 @@ int main(int argc, char* argv[]) {
 
     if (!fp) {
         perror("No file path provided");
+        fclose(fp);
         return 1;
     }
     
