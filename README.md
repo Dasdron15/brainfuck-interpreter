@@ -2,4 +2,8 @@
 Created this project for fun.
 
 ### Usage
-Simply compile the code via `make` command and then type this command `./brainf <PATH TO FILE>` and there you go, you executed brainfuck code!
+Compile with `make`, then run:
+```bash
+./brainf <path to file>
+```
+And there you go - you've successfully executed your brainfuck code.
