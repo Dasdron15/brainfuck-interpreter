@@ -5,11 +5,13 @@
 #include <termios.h>
 
 #define LENGTH 30000
+#define STACK_SIZE 1024
 
 struct termios oldt, newt;
 
 uint8_t turing[LENGTH] = {0};
-
+int loop_stack[STACK_SIZE];
+int stack_ptr = -1;
 
 void raw_mode() {
     tcgetattr(STDIN_FILENO, &oldt);
@@ -26,7 +28,7 @@ int main(int argc, char* argv[]) {
     FILE *fp = fopen(argv[1], "r");
 
     if (!fp) {
-        perror("No file path provided");
+        perror("Failed to open file");
         return 1;
     }
     
@@ -95,12 +97,27 @@ int main(int argc, char* argv[]) {
             }
 
             case '[':
-                loop_start = i;
+                if (turing[current_cell]) {
+                    loop_stack[++stack_ptr] = i;
+                } else {
+                    int open = 1;
+                    while (open) {
+                        i++;
+                        if (code[i] == '[') {
+                            open++;
+                        }
+                        if (code[i] == ']') {
+                            open--;
+                        }
+                    }
+                }
                 break;
             
             case ']':
-                if (turing[current_cell] != 0) {
-                    i = loop_start - 1;
+                if (turing[current_cell]) {
+                    i = loop_stack[stack_ptr];
+                } else {
+                    stack_ptr--;
                 }
                 break;
         }
