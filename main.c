@@ -1,11 +1,25 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <termios.h>
-#include "modes.h"
 
 #define LENGTH 30000
 
+struct termios oldt, newt;
+
 uint8_t turing[LENGTH] = {0};
+
+
+void raw_mode() {
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    cfmakeraw(&newt);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+}
+
+void reset_terminal() {
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+};
 
 int main(int argc, char* argv[]) {
     FILE *fp = fopen(argv[1], "r");
@@ -18,6 +32,7 @@ int main(int argc, char* argv[]) {
     int operand;
     int current_cell = 0;
     int loop_start;
+    int was_print = 0;
 
     raw_mode();
 
@@ -48,6 +63,7 @@ int main(int argc, char* argv[]) {
                 break;
 
             case '.':
+                was_print = 1;
                 printf("%c", (char) turing[current_cell]);
                 break;
 
@@ -68,6 +84,12 @@ int main(int argc, char* argv[]) {
             case ']':
                 break;
         }
+    }
+    
+    reset_terminal();
+
+    if (was_print) {
+        printf("\n");
     }
 
     return 0;
