@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <termios.h>
 
@@ -28,16 +29,24 @@ int main(int argc, char* argv[]) {
         perror("No file path provided");
         return 1;
     }
+    
+    fseek(fp, 0L, SEEK_END);
+    int size = ftell(fp);
+    rewind(fp);
 
-    int operand;
+    char* code = malloc(size + 1);
+    fread(code, 1, size, fp);
+    code[size] = '\0';
+
+    size_t pc = 0;
     int current_cell = 0;
     int loop_start;
     int was_print = 0;
 
     raw_mode();
 
-    while ((operand = fgetc(fp)) != EOF) {
-        switch ((char) operand) {
+    for (int i = 0; i < size; i++) {
+        switch (code[i]) {
             case '>':
                 current_cell++;
                 break;
@@ -79,13 +88,15 @@ int main(int argc, char* argv[]) {
             }
 
             case '[':
+                
                 break;
             
             case ']':
                 break;
         }
     }
-    
+
+    fclose(fp);
     reset_terminal();
 
     if (was_print) {
