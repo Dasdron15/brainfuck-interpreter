@@ -6,13 +6,24 @@
 #include <windows.h>
 #include <conio.h>
 
-void raw_mode() {
+HANDLE hStdin;
+DWORD originalMode;
 
+void raw_mode() {
+    hStdin = GetStdHandle(STD_INPUT_HANDLE);
+    GetConsoleMode(hStdin, &originalMode);
+
+    DWORD raw = originalMode;
+    raw &= ~(ENABLE_ECHO_INPUT | ENABLE_LINE_INPUT | ENABLE_PROCESSED_INPUT);
+    SetConsoleMode(hStdin, raw);
 }
 
 void reset_terminal() {
-
+    SetConsoleMode(hStdin, originalMode);
 }
+
+#define READ_CHAR(ch) do { ch = _getch(); } while (0)
+
 #else // For UNIX terminals
 #include <termios.h>
 #include <unistd.h>
