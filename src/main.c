@@ -72,9 +72,7 @@ int main(int argc, char* argv[]) {
     fread(code, 1, size, fp);
     code[size] = '\0';
 
-    size_t pc = 0;
     int current_cell = 0;
-    int loop_start;
 
     raw_mode();
 
