@@ -1,17 +1,23 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <termios.h>
 
-#define LENGTH 30000
-#define STACK_SIZE 1024
+#ifdef _WIN32 // For Windows terminals
+#include <windows.h>
+#include <conio.h>
+
+void raw_mode() {
+
+}
+
+void reset_terminal() {
+
+}
+#else // For UNIX terminals
+#include <termios.h>
+#include <unistd.h>
 
 struct termios oldt, newt;
-
-uint8_t turing[LENGTH] = {0};
-int loop_stack[STACK_SIZE];
-int stack_ptr = -1;
 
 void raw_mode() {
     tcgetattr(STDIN_FILENO, &oldt);
@@ -23,6 +29,16 @@ void raw_mode() {
 void reset_terminal() {
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
 };
+
+#define READ_CHAR(ch) while (read(STDIN_FILENO, &ch, 1) == 1 && ((int) ch < 0 || (int) ch > 127))
+#endif
+
+#define LENGTH 30000
+#define STACK_SIZE 1024
+
+uint8_t turing[LENGTH] = {0};
+int loop_stack[STACK_SIZE];
+int stack_ptr = -1;
 
 int main(int argc, char* argv[]) {
     FILE *fp = fopen(argv[1], "r");
@@ -81,17 +97,14 @@ int main(int argc, char* argv[]) {
                 break;
 
             case '.':
-                printf("%c", (char) turing[current_cell]);
+                putchar(turing[current_cell]);
+                fflush(stdout);
                 break;
 
             case ',':
             {
                 char ch;
-                while (read(STDIN_FILENO, &ch, 1) == 1) {
-                    if ((int) ch >= 0 && (int) ch <= 127) {
-                        break;
-                    }
-                }
+                READ_CHAR(ch);
                 turing[current_cell] = (int) ch;
                 break;
             }
