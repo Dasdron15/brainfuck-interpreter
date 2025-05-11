@@ -52,6 +52,11 @@ int loop_stack[STACK_SIZE];
 int stack_ptr = -1;
 
 int main(int argc, char* argv[]) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <PATH TO FILE>\n", argv[0]);
+        return 1;
+    }
+
     FILE *fp = fopen(argv[1], "r");
 
     if (!fp) {
@@ -75,52 +80,56 @@ int main(int argc, char* argv[]) {
 
     for (int i = 0; i < size; i++) {
         switch (code[i]) {
-            case '>':
+            case '>': {
                 if (current_cell >= 29999) {
                     current_cell = 0;
                 } else {
                     current_cell++;
                 }
                 break;
+            }
             
-            case '<':
+            case '<': {
                 if (current_cell <= 0) {
                     current_cell = 29999;
                 } else {
                     current_cell--;
                 }
                 break;
+            }
 
-            case '+':
+            case '+': {
                 if (turing[current_cell] == 255) {
                     turing[current_cell] = 0;
                 } else {
                     turing[current_cell]++;
                 }
                 break;
+            }
             
-            case '-':
+            case '-': {
                 if (turing[current_cell] == 0) {
                     turing[current_cell] = 255;
                 } else {
                     turing[current_cell]--;
                 }
                 break;
+            }
 
-            case '.':
+            case '.': {
                 putchar(turing[current_cell]);
                 fflush(stdout);
                 break;
+            }
 
-            case ',':
-            {
+            case ',': {
                 char ch;
                 READ_CHAR(ch);
                 turing[current_cell] = (int) ch;
                 break;
             }
 
-            case '[':
+            case '[': {
                 if (turing[current_cell]) {
                     loop_stack[++stack_ptr] = i;
                 } else {
@@ -136,14 +145,16 @@ int main(int argc, char* argv[]) {
                     }
                 }
                 break;
+            }
             
-            case ']':
+            case ']': {
                 if (turing[current_cell]) {
                     i = loop_stack[stack_ptr];
                 } else {
                     stack_ptr--;
                 }
                 break;
+            }
         }
     }
 
