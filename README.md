@@ -1,4 +1,4 @@
-## Brainfuck interpreter written on C
+## Brainfuck Interpreter
 Created this project for fun.
 
 ### Usage
